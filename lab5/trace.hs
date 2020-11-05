@@ -145,7 +145,7 @@ letterIsIndeptWithRest inDeptSet letter word' =
         then True
         else False
 
--- Creates FNF segment recurisvely by checking if there are letters that are independent from all other in FNF segment that it creates
+-- Creates FNF segment recurisvely by checking if there are letters that are independent from all other that precede checked letter
 recurIndependency :: [(Char, Char)] -> String -> String -> Int -> String
 recurIndependency inDeptSet fnfSegment w i =
     if i == (length w)
@@ -163,11 +163,14 @@ recurIndependency inDeptSet fnfSegment w i =
 -- Calculate D
 calculateDependencySet :: [(Char, String)] -> String -> [(Char, Char)]
 calculateDependencySet productions alphabet = 
-    [(x, y) | x <- alphabet, y <- alphabet, x == y || containsVarOnProdRHS productions y (getProdLHS productions x) || containsVarOnProdRHS productions x (getProdLHS productions y) ]
+    [(x, y) | x <- alphabet, y <- alphabet, (getProdLHS productions x) == (getProdLHS productions y) || 
+    containsVarOnProdRHS productions y (getProdLHS productions x) || 
+    containsVarOnProdRHS productions x (getProdLHS productions y) ]
 
 -- Calculate I
 calculateIndependencySet :: [(Char, String)] -> String -> [(Char, Char)]
-calculateIndependencySet productions alphabet = [(x, y) | x <- alphabet, y <- alphabet, not ((x, y) `elem` d)] where d = calculateDependencySet productions alphabet
+calculateIndependencySet productions alphabet = [(x, y) | x <- alphabet, y <- alphabet, not ((x, y) `elem` d)] 
+    where d = calculateDependencySet productions alphabet
 
 -- Get left hand side of the production related to letter 'prodLetter' from alphabet A
 getProdRHSVars :: [(Char, String)] -> Char -> String
@@ -361,8 +364,6 @@ readInputPrintOutput = do
         alphabet = squeezeToString alph
         word = parseWord w
     (letters, prods) <- readProd [] (length alphabet) ""
-    print letters
-    print prods
     let productions = if (length letters) == (length alphabet)
         then zip letters prods
         else zip alphabet prods
