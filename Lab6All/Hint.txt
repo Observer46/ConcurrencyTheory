@@ -1,0 +1,6 @@
+Zbiorów zależności będzie co najmniej 5:
+A z B
+B z C
+C z A
+C z B
+C z C
